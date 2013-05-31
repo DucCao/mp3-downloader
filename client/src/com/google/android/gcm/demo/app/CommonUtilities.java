@@ -19,15 +19,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 
 /**
@@ -98,7 +93,6 @@ public final class CommonUtilities {
 
             String PATH = Environment.getExternalStorageDirectory()
                     + "/download/";
-            android.util.Log.v("TEST", "PATH: " + PATH);
             File file = new File(PATH);
             file.mkdirs();
 

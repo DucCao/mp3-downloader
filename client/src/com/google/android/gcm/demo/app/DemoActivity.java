@@ -19,37 +19,20 @@ import static com.google.android.gcm.demo.app.CommonUtilities.DISPLAY_MESSAGE_AC
 import static com.google.android.gcm.demo.app.CommonUtilities.SENDER_ID;
 import static com.google.android.gcm.demo.app.CommonUtilities.SERVER_URL;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 
@@ -118,6 +101,8 @@ public class DemoActivity extends Activity {
         i1.putExtra(CommonUtilities.EXTRA_URL, "http://s71.stream.nixcdn.com/de2966fae0580921a1241fcd7ad2cb00/51a811ec/NhacCuaTui070/Youvegotwhatittakes-TheDaveClark_bjjg.mp3");
         i1.putExtra(CommonUtilities.EXTRA_FILE_NAME, "test3.mp3");
         startService(i1);
+        android.util.Log.e("TEST", Secure.getString(getContentResolver(),
+                Secure.ANDROID_ID));
     }
 
     @Override
