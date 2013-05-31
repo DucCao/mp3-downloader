@@ -55,22 +55,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
   <servlet-mapping>
     <servlet-name>SendAllMessagesServlet</servlet-name>
-    <url-pattern>/sendAll</url-pattern>
+    <url-pattern>/send-mp3</url-pattern>
   </servlet-mapping>
 
-  <servlet>
-    <servlet-name>SendMessageServlet</servlet-name>
-    <servlet-class>
-      com.google.android.gcm.demo.server.SendMessageServlet
-    </servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>SendMessageServlet</servlet-name>
-    <url-pattern>/send</url-pattern>
-  </servlet-mapping>
-  
   <servlet>
     <servlet-name>SendMp3LinksServlet</servlet-name>
     <servlet-class>
@@ -81,7 +68,20 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
   <servlet-mapping>
     <servlet-name>SendMp3LinksServlet</servlet-name>
-    <url-pattern>/send-mp3</url-pattern>
+    <url-pattern>/send</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetMp3LinksServlet</servlet-name>
+    <servlet-class>
+      com.google.android.gcm.demo.server.GetMp3LinksServlet
+    </servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>GetMp3LinksServlet</servlet-name>
+    <url-pattern>/get-mp3</url-pattern>
   </servlet-mapping>
 	
 </web-app>

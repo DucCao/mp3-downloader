@@ -104,17 +104,17 @@ public class SendMp3LinksServlet extends BaseServlet {
     String nctLink = req.getParameter("nctLink");
     try {
         if (regId != null) {
-            List<String> listMp3Files = Mp3Parser.parseNctPlaylist(nctLink);
-            sendSingleMessage(regId, listMp3Files, resp);
+            sendSingleMessage(regId, nctLink, resp);
         }
     } catch (Exception e) {
         e.printStackTrace();
     }
   }
 
-  private void sendSingleMessage(String regId, List<String> listMp3Files, HttpServletResponse resp) {
+  private void sendSingleMessage(String regId, String link, HttpServletResponse resp) {
     logger.info("Sending message to device " + regId);
-    Message message = new Message.Builder().addData("team", new JSONArray().toString()).build();
+    String api = "http://mp3-downloader.appspot.com/get-mp3?nctLink=" + link;
+    Message message = new Message.Builder().addData("api", api).build();
     Result result;
     try {
       result = sender.sendNoRetry(message, regId);

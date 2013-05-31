@@ -18,35 +18,31 @@ package com.google.android.gcm.demo.server;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
 /**
- * Servlet that adds display number of devices and button to send a message.
+ * Servlet that sends a message to a device.
  * <p>
- * This servlet is used just by the browser (i.e., not device) and contains the
- * main page of the demo app.
+ * This servlet is invoked by AppEngine's Push Queue mechanism.
  */
 @SuppressWarnings("serial")
-public class HomeServlet extends BaseServlet {
+public class GetMp3LinksServlet extends BaseServlet {
 
-  static final String ATTRIBUTE_STATUS = "status";
-
-  /**
-   * Displays the existing messages and offer the option to send a new one.
-   */
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws IOException {
-      resp.getWriter().print("home");
-  }
-
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-      throws IOException {
-    doGet(req, resp);
-  }
-
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException, ServletException {
+        String nctLink = req.getParameter("nctLink");
+        try {
+            List<String> listMp3Files = Mp3Parser.parseNctPlaylist(nctLink);
+            
+            resp.setContentType("application/json");
+            resp.getWriter().print(new JSONArray(listMp3Files));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

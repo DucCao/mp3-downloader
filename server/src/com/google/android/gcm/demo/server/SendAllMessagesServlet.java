@@ -44,56 +44,51 @@ public class SendAllMessagesServlet extends BaseServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
-    List<String> devices = Datastore.getDevices();
-    String removedMembers = req.getParameter("remove_members");
-    if (removedMembers != null) {
-	TeamGenerator.updateMembers(removedMembers);
-    } else {
-	TeamGenerator.updateMembers("");
-    }
+//    List<String> devices = Datastore.getDevices();
     
     String status;
-    if (devices.isEmpty()) {
-      status = "Message ignored as there is no device registered!";
-    } else {
+//    if (devices.isEmpty()) {
+//      status = "Message ignored as there is no device registered!";
+//    } else {
       Queue queue = QueueFactory.getQueue("gcm");
       // NOTE: check below is for demonstration purposes; a real application
       // could always send a multicast, even for just one recipient
-      if (devices.size() == 1) {
+//      if (devices.size() == 1) {
         // send a single message using plain post
-        String device = devices.get(0);
-        queue.add(withUrl("/send").param(
-            SendMessageServlet.PARAMETER_DEVICE, device));
-        status = "Single message queued for registration id " + device;
-      } else {
-        // send a multicast message using JSON
-        // must split in chunks of 1000 devices (GCM limit)
-        int total = devices.size();
-        List<String> partialDevices = new ArrayList<String>(total);
-        int counter = 0;
-        int tasks = 0;
-        for (String device : devices) {
-          counter++;
-          partialDevices.add(device);
-          int partialSize = partialDevices.size();
-          if (partialSize == Datastore.MULTICAST_SIZE || counter == total) {
-            String multicastKey = Datastore.createMulticast(partialDevices);
-            logger.fine("Queuing " + partialSize + " devices on multicast " +
-                multicastKey);
-            TaskOptions taskOptions = TaskOptions.Builder
-                .withUrl("/send")
-                .param(SendMessageServlet.PARAMETER_MULTICAST, multicastKey)
-                .method(Method.POST);
-            queue.add(taskOptions);
-            partialDevices.clear();
-            tasks++;
-          }
-        }
-        status = "Queued tasks to send " + tasks + " multicast messages to " +
-            total + " devices";
-      }
-    }
-    req.setAttribute(HomeServlet.ATTRIBUTE_STATUS, status.toString());
+//        String device = devices.get(0);
+        queue.add(withUrl("/send")
+             .param("nctLink", req.getParameter("nctLink"))
+             .param("phoneId", req.getParameter("phoneId")));
+//      } else {
+//        // send a multicast message using JSON
+//        // must split in chunks of 1000 devices (GCM limit)
+//        int total = devices.size();
+//        List<String> partialDevices = new ArrayList<String>(total);
+//        int counter = 0;
+//        int tasks = 0;
+//        for (String device : devices) {
+//          counter++;
+//          partialDevices.add(device);
+//          int partialSize = partialDevices.size();
+//          if (partialSize == Datastore.MULTICAST_SIZE || counter == total) {
+//            String multicastKey = Datastore.createMulticast(partialDevices);
+//            logger.fine("Queuing " + partialSize + " devices on multicast " +
+//                multicastKey);
+//            TaskOptions taskOptions = TaskOptions.Builder
+//                .withUrl("/send")
+//                .param(SendMessageServlet.PARAMETER_MULTICAST, multicastKey)
+//                .method(Method.POST);
+//            queue.add(taskOptions);
+//            partialDevices.clear();
+//            tasks++;
+//          }
+//        }
+//        status = "Queued tasks to send " + tasks + " multicast messages to " +
+//            total + " devices";
+//      }
+//    }
+  
+    req.setAttribute(HomeServlet.ATTRIBUTE_STATUS, "");
     getServletContext().getRequestDispatcher("/home").forward(req, resp);
   }
 
