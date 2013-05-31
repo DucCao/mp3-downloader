@@ -1,0 +1,40 @@
+<html>
+<head>
+	<script type="text/javascript" src="../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../js/script.js"></script>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap-responsive.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+<body>
+	<div class="container">
+		<div class="alert">
+			<button type="button" class="close">&times;</button>
+			<span id="message-content"></span>
+		</div>
+		<div class="control-group main-div input-div" id="input-id-form">
+			<label class="control-label" for="id">Your id</label>
+			<div class="controls">
+				<input class="input-large" name="id" id="input-id" type="text" placeholder="Id">
+			</div>
+			<div class="controls">
+				<button class="btn btn-info" id="submit-id">Submit your id</button>
+			</div>
+		</div>
+		<div class="control-group main-div" id="send-playlist-form">
+			<label class="control-label" for="id">Your id</label>
+			<div class="controls">
+				<input class="input-large" id="text-id" name="text-id" type="text" disabled />
+			</div>
+			<div class="controls">
+				<button class="btn btn-info" id="edit-id">Edit Id</button>
+				<button class="btn btn-primary" id="send-playlist">Send playlist</button>
+			</div>
+			<div id="loading" class="loading padding10">
+				<img src="../img/loading.gif">
+			</div>
+		</div>
+	</div>
+</body>
+</html>
