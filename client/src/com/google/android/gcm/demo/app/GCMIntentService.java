@@ -18,13 +18,22 @@ package com.google.android.gcm.demo.app;
 import static com.google.android.gcm.demo.app.CommonUtilities.SENDER_ID;
 import static com.google.android.gcm.demo.app.CommonUtilities.displayMessage;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.http.AndroidHttpClient;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
@@ -45,7 +54,8 @@ public class GCMIntentService extends GCMBaseIntentService {
     protected void onRegistered(Context context, String registrationId) {
         Log.i(TAG, "Device registered: regId = " + registrationId);
         displayMessage(context, getString(R.string.gcm_registered));
-        ServerUtilities.register(context, registrationId);
+        // TODO change to phoneId later :-q
+        ServerUtilities.register(context, registrationId, "lenovo");
     }
 
     @Override
@@ -66,9 +76,38 @@ public class GCMIntentService extends GCMBaseIntentService {
         String api = intent.getStringExtra("api");
         Log.i(TAG, "Received message: " + api);
         
-//        String message = getString(R.string.gcm_message);
-//        CommonUtilities.displayTeams(context, mp3Files);
-//        // notifies user
+        // get list of all mp3 files now
+        AndroidHttpClient client = null;
+        try {
+            client = AndroidHttpClient.newInstance("Android");
+
+            HttpGet httpGet = new HttpGet(api);
+            HttpResponse response;
+            try {
+                response = client.execute(httpGet);
+                String json = EntityUtils.toString(response.getEntity());
+                JSONArray array = new JSONArray(json);
+                ArrayList<String> urls = new ArrayList<String>();
+                for (int i = 0; i < array.length(); ++i) {
+                    String mp3Link = array.getString(i);
+                    urls.add(mp3Link);
+                }
+                
+                // start DownloadService
+                Intent itent = new Intent(this, DownloadService.class);
+                itent.putExtra(CommonUtilities.EXTRA_URLS, urls);
+                startService(itent);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
     }
 
     @Override

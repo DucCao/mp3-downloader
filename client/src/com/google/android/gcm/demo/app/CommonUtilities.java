@@ -24,6 +24,7 @@ import java.net.URL;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.util.Log;
 
 /**
  * Helper class providing methods and constants common to other classes in the
@@ -58,7 +59,7 @@ public final class CommonUtilities {
      */
     static final String EXTRA_MESSAGE = "message";
     static final String EXTRA_TEAM_IN_JSON = "team_in_json";
-    static final String EXTRA_URL = "download_url";
+    static final String EXTRA_URLS = "download_url";
     static final String EXTRA_FILE_NAME = "file_name";
 
     /**
@@ -82,10 +83,11 @@ public final class CommonUtilities {
         context.sendBroadcast(intent);
     }
     
-    public static void mp3Download(String surl, String fileName) {
+    public static void mp3Download(String urlString) {
+        Log.e("TEST", "download file: " + urlString);
         URL url;
         try {
-            url = new URL(surl);
+            url = new URL(urlString);
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
             c.setDoOutput(true);
@@ -96,6 +98,9 @@ public final class CommonUtilities {
             File file = new File(PATH);
             file.mkdirs();
 
+//            File outputFile = new File(file, urlString.replaceAll(".", ""));
+            String[] array = urlString.split("/");
+            String fileName = array[array.length - 1];
             File outputFile = new File(file, fileName);
             FileOutputStream fos = new FileOutputStream(outputFile);
 

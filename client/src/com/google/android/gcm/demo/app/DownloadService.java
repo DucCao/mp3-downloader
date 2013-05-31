@@ -1,5 +1,7 @@
 package com.google.android.gcm.demo.app;
 
+import java.util.ArrayList;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -20,7 +22,7 @@ public class DownloadService extends Service {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private NotificationManager mNotificationManager;
-    private String downloadUrl, fileName;
+    private ArrayList<String> urls;
     public static boolean serviceState;
 
     // Handler that receives messages from the thread
@@ -31,7 +33,6 @@ public class DownloadService extends Service {
         @Override
         public void handleMessage(Message msg) {
             downloadFile();
-            showNotification("a", "b");
             stopSelf(msg.arg1);
         }
     }
@@ -51,8 +52,7 @@ public class DownloadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle extra = intent.getExtras();
         if(extra != null){
-            this.downloadUrl = extra.getString(CommonUtilities.EXTRA_URL);
-            this.fileName = extra.getString(CommonUtilities.EXTRA_FILE_NAME);
+            this.urls = extra.getStringArrayList(CommonUtilities.EXTRA_URLS);
         }
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
@@ -73,7 +73,9 @@ public class DownloadService extends Service {
     }
 
     public void downloadFile() {
-        CommonUtilities.mp3Download(this.downloadUrl, this.fileName);
+        for (String url : urls) {
+            CommonUtilities.mp3Download(url);
+        }
     }
 
     private void showNotification(String title, String message) {
@@ -98,4 +100,6 @@ public class DownloadService extends Service {
         mNotificationManager.notify(1, notification);
     }
 }
+
+
 

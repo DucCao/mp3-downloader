@@ -99,7 +99,7 @@ public class DemoActivity extends Activity {
 
     private void startService(String url, String fileName) {
         Intent itent = new Intent(this, DownloadService.class);
-        itent.putExtra(CommonUtilities.EXTRA_URL, url);
+        itent.putExtra(CommonUtilities.EXTRA_URLS, url);
         itent.putExtra(CommonUtilities.EXTRA_FILE_NAME, fileName);
         startService(itent);
     }
