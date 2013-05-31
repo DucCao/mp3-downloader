@@ -74,7 +74,7 @@ public class DemoActivity extends Activity {
                     @Override
                     protected Void doInBackground(Void... params) {
                         boolean registered =
-                                ServerUtilities.register(context, regId);
+                                ServerUtilities.register(context, regId, "abcdef");
                         // At this point all attempts to register with the app
                         // server failed, so we need to unregister the device
                         // from GCM - the app will try to register again when
@@ -91,20 +91,19 @@ public class DemoActivity extends Activity {
                     protected void onPostExecute(Void result) {
                         mRegisterTask = null;
                     }
-
                 };
                 mRegisterTask.execute(null, null, null);
             }
         }
-        
-        Intent i1 = new Intent(this, DownloadService.class);
-        i1.putExtra(CommonUtilities.EXTRA_URL, "http://s71.stream.nixcdn.com/de2966fae0580921a1241fcd7ad2cb00/51a811ec/NhacCuaTui070/Youvegotwhatittakes-TheDaveClark_bjjg.mp3");
-        i1.putExtra(CommonUtilities.EXTRA_FILE_NAME, "test3.mp3");
-        startService(i1);
-        android.util.Log.e("TEST", Secure.getString(getContentResolver(),
-                Secure.ANDROID_ID));
     }
 
+    private void startService(String url, String fileName) {
+        Intent itent = new Intent(this, DownloadService.class);
+        itent.putExtra(CommonUtilities.EXTRA_URL, url);
+        itent.putExtra(CommonUtilities.EXTRA_FILE_NAME, fileName);
+        startService(itent);
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -115,20 +114,6 @@ public class DemoActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            /*
-             * Typically, an application registers automatically, so options
-             * below are disabled. Uncomment them if you want to manually
-             * register or unregister the device (you will also need to
-             * uncomment the equivalent options on options_menu.xml).
-             */
-            /*
-            case R.id.options_register:
-                GCMRegistrar.register(this, SENDER_ID);
-                return true;
-            case R.id.options_unregister:
-                GCMRegistrar.unregister(this);
-                return true;
-             */
             case R.id.options_clear:
         	new Thread() {
         	    public void run() {
@@ -167,7 +152,6 @@ public class DemoActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.e("TEST", "newIntent");
         String newMessage = intent.getExtras().getString(CommonUtilities.EXTRA_TEAM_IN_JSON);
         if (newMessage != null) {
         }
