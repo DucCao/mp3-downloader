@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/sendAll</url>
+    <description>Teams</description>
+    <schedule>every mon,tue,wed,thu,fri 12:15</schedule>
+    <timezone>Asia/Saigon</timezone>
+  </cron>
+</cronentries>
