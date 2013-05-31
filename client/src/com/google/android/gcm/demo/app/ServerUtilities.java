@@ -54,6 +54,7 @@ public final class ServerUtilities {
         String serverUrl = SERVER_URL + "/register";
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
+        params.put("phoneId", "lenovo");
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
         // Once GCM returns a registration id, we need to register it in the
         // demo server. As the server might be down, we will retry it a couple

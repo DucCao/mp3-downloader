@@ -24,6 +24,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
@@ -62,13 +63,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onMessage(Context context, Intent intent) {
-	String teamInJson = intent.getStringExtra("team");
-        Log.i(TAG, "Received message: " + teamInJson);
+        String api = intent.getStringExtra("api");
+        Log.i(TAG, "Received message: " + api);
         
-        String message = getString(R.string.gcm_message);
-        CommonUtilities.displayTeams(context, teamInJson);
-        // notifies user
-        generateNotification(context, message, teamInJson);
+//        String message = getString(R.string.gcm_message);
+//        CommonUtilities.displayTeams(context, mp3Files);
+//        // notifies user
     }
 
     @Override
