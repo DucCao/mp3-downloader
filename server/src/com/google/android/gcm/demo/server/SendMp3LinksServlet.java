@@ -114,7 +114,7 @@ public class SendMp3LinksServlet extends BaseServlet {
 
   private void sendSingleMessage(String regId, List<String> listMp3Files, HttpServletResponse resp) {
     logger.info("Sending message to device " + regId);
-    Message message = new Message.Builder().addData("team", new JSONArray().toString()).build();
+    Message message = new Message.Builder().addData("mp3", new JSONArray(listMp3Files).toString()).build();
     Result result;
     try {
       result = sender.sendNoRetry(message, regId);
@@ -145,68 +145,6 @@ public class SendMp3LinksServlet extends BaseServlet {
             + ": " + error);
       }
     }
-  }
-
-  private void sendMulticastMessage(String multicastKey,
-      HttpServletResponse resp) {
-    // Recover registration ids from datastore
-    List<String> regIds = Datastore.getMulticast(multicastKey);
-    Message message = new Message.Builder().addData("team", TeamGenerator.generateTeamFoosBallInJson()).build();
-    MulticastResult multicastResult;
-    try {
-      multicastResult = sender.sendNoRetry(message, regIds);
-    } catch (IOException e) {
-      logger.log(Level.SEVERE, "Exception posting " + message, e);
-      multicastDone(resp, multicastKey);
-      return;
-    }
-    boolean allDone = true;
-    // check if any registration id must be updated
-    if (multicastResult.getCanonicalIds() != 0) {
-      List<Result> results = multicastResult.getResults();
-      for (int i = 0; i < results.size(); i++) {
-        String canonicalRegId = results.get(i).getCanonicalRegistrationId();
-        if (canonicalRegId != null) {
-          String regId = regIds.get(i);
-          Datastore.updateRegistration(regId, canonicalRegId);
-        }
-      }
-    }
-    if (multicastResult.getFailure() != 0) {
-      // there were failures, check if any could be retried
-      List<Result> results = multicastResult.getResults();
-      List<String> retriableRegIds = new ArrayList<String>();
-      for (int i = 0; i < results.size(); i++) {
-        String error = results.get(i).getErrorCodeName();
-        if (error != null) {
-          String regId = regIds.get(i);
-          logger.warning("Got error (" + error + ") for regId " + regId);
-          if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-            // application has been removed from device - unregister it
-            Datastore.unregister(regId);
-          }
-          if (error.equals(Constants.ERROR_UNAVAILABLE)) {
-            retriableRegIds.add(regId);
-          }
-        }
-      }
-      if (!retriableRegIds.isEmpty()) {
-        // update task
-        Datastore.updateMulticast(multicastKey, retriableRegIds);
-        allDone = false;
-        retryTask(resp);
-      }
-    }
-    if (allDone) {
-      multicastDone(resp, multicastKey);
-    } else {
-      retryTask(resp);
-    }
-  }
-
-  private void multicastDone(HttpServletResponse resp, String encodedKey) {
-    Datastore.deleteMulticast(encodedKey);
-    taskDone(resp);
   }
 
 }
