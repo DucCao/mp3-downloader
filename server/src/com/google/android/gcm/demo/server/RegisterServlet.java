@@ -31,14 +31,16 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class RegisterServlet extends BaseServlet {
 
-  private static final String PARAMETER_REG_ID = "regId";
+    private static final String PARAMETER_REG_ID = "regId";
+    private static final String PARAMETER_PHONE_ID = "phoneId";
 
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException {
-    String regId = getParameter(req, PARAMETER_REG_ID);
-    Datastore.register(regId);
-    setSuccess(resp);
-  }
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException {
+        String regId = getParameter(req, PARAMETER_REG_ID);
+        String phoneId = getParameter(req, PARAMETER_PHONE_ID);
+        Datastore.register(regId, phoneId);
+        setSuccess(resp);
+    }
 
 }
