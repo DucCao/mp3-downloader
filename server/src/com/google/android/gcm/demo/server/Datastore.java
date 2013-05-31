@@ -43,6 +43,7 @@ public final class Datastore {
   static final int MULTICAST_SIZE = 1000;
   private static final String DEVICE_TYPE = "Device";
   private static final String DEVICE_REG_ID_PROPERTY = "regId";
+  private static final String DEVICE_PHONE_ID_PROPERTY = "phoneId";
 
   private static final String MULTICAST_TYPE = "Multicast";
   private static final String MULTICAST_REG_IDS_PROPERTY = "regIds";
@@ -64,8 +65,10 @@ public final class Datastore {
    *
    * @param regId device's registration id.
    */
-  public static void register(String regId) {
-    logger.info("Registering " + regId);
+  public static void register(String regId, String phoneId) {
+    logger.info("Registering regId: " + regId);
+    logger.info("Registering phoneId: " + phoneId);
+    
     Transaction txn = datastore.beginTransaction();
     try {
       Entity entity = findDeviceByRegId(regId);
@@ -75,6 +78,7 @@ public final class Datastore {
       }
       entity = new Entity(DEVICE_TYPE);
       entity.setProperty(DEVICE_REG_ID_PROPERTY, regId);
+      entity.setProperty(DEVICE_PHONE_ID_PROPERTY, phoneId);
       datastore.put(entity);
       txn.commit();
     } finally {
