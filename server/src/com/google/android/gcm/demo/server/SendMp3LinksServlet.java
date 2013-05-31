@@ -114,7 +114,7 @@ public class SendMp3LinksServlet extends BaseServlet {
 
   private void sendSingleMessage(String regId, List<String> listMp3Files, HttpServletResponse resp) {
     logger.info("Sending message to device " + regId);
-    Message message = new Message.Builder().addData("mp3", new JSONArray(listMp3Files).toString()).build();
+    Message message = new Message.Builder().addData("mp3-files", new JSONArray(listMp3Files).toString()).build();
     Result result;
     try {
       result = sender.sendNoRetry(message, regId);
