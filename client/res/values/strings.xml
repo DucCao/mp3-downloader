@@ -16,7 +16,7 @@
 -->
 <resources>
 
-    <string name="app_name">What\'s your team</string>
+    <string name="app_name">Mp3 downloader</string>
     <string name="notification_id">id</string>
     <string name="error_config">Please set the %1$s constant and recompile the app.</string>
     <string name="already_registered">Device is already registered on server.</string>
