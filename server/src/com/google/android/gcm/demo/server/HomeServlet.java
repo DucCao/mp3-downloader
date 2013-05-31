@@ -41,20 +41,17 @@ public class HomeServlet extends BaseServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException {
       
-      resp.setContentType("application/json");
-      try {
-          String nctLink = "http://www.nhaccuatui.com/playlist/tuyen-tap-nhac-quoc-te-bat-hu-va.tcfuADGqVpy0.html";
-          List<String> listMp3Files = Mp3Parser.parseNctPlaylist(nctLink);
-          resp.getWriter().println(new JSONArray(listMp3Files).toString());
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-
+//      resp.setContentType("application/json");
 //      try {
-//          getServletContext().getRequestDispatcher("/sendAll").forward(req, resp);
-//      } catch (ServletException e) {
+//          String nctLink = "http://www.nhaccuatui.com/playlist/tuyen-tap-nhac-quoc-te-bat-hu-va.tcfuADGqVpy0.html";
+//          List<String> listMp3Files = Mp3Parser.parseNctPlaylist(nctLink);
+//          resp.getWriter().println(new JSONArray(listMp3Files).toString());
+//      } catch (Exception e) {
 //          e.printStackTrace();
 //      }
+      
+      String phoneId = req.getParameter("phoneId");
+      resp.getWriter().print(Datastore.getDevice(phoneId));
   }
 
   @Override

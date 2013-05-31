@@ -15,6 +15,11 @@
  */
 package com.google.android.gcm.demo.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -24,13 +29,10 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Simple implementation of a data store using standard Java collections.
@@ -43,6 +45,7 @@ public final class Datastore {
   static final int MULTICAST_SIZE = 1000;
   private static final String DEVICE_TYPE = "Device";
   private static final String DEVICE_REG_ID_PROPERTY = "regId";
+  private static final String DEVICE_PHONE_ID_PROPERTY = "phoneId";
 
   private static final String MULTICAST_TYPE = "Multicast";
   private static final String MULTICAST_REG_IDS_PROPERTY = "regIds";
@@ -64,8 +67,10 @@ public final class Datastore {
    *
    * @param regId device's registration id.
    */
-  public static void register(String regId) {
-    logger.info("Registering " + regId);
+  public static void register(String regId, String phoneId) {
+    logger.info("Registering regId: " + regId);
+    logger.info("Registering phoneId: " + phoneId);
+    
     Transaction txn = datastore.beginTransaction();
     try {
       Entity entity = findDeviceByRegId(regId);
@@ -75,6 +80,7 @@ public final class Datastore {
       }
       entity = new Entity(DEVICE_TYPE);
       entity.setProperty(DEVICE_REG_ID_PROPERTY, regId);
+      entity.setProperty(DEVICE_PHONE_ID_PROPERTY, phoneId);
       datastore.put(entity);
       txn.commit();
     } finally {
@@ -152,6 +158,24 @@ public final class Datastore {
       }
     }
     return devices;
+  }
+  
+  public static String getDevice(String phoneId) {
+      Filter filter =
+              new FilterPredicate("phoneId",
+                                  FilterOperator.EQUAL,
+                                  phoneId);
+      
+      Query query = new Query(DEVICE_TYPE).setFilter(filter);
+      List<Entity> listEntity = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+      
+      String deviceId = null;
+      if(listEntity.size() > 0) {
+          Entity entity = listEntity.get(0);
+          deviceId = (String) entity.getProperty("regId");
+      }
+      
+      return deviceId;
   }
 
   /**
