@@ -70,5 +70,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-name>SendMessageServlet</servlet-name>
     <url-pattern>/send</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>SendMp3LinksServlet</servlet-name>
+    <servlet-class>
+      com.google.android.gcm.demo.server.SendMp3LinksServlet
+    </servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SendMp3LinksServlet</servlet-name>
+    <url-pattern>/send-mp3</url-pattern>
+  </servlet-mapping>
 	
 </web-app>
