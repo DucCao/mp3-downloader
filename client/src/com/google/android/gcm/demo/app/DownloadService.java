@@ -74,7 +74,11 @@ public class DownloadService extends Service {
 
     public void downloadFile() {
         for (String url : urls) {
+            String[] array = url.split("/");
+            String fileName = array[array.length - 1];
+            showNotification("Download", fileName);
             CommonUtilities.mp3Download(url);
+            mNotificationManager.cancel(1);
         }
     }
 
