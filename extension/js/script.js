@@ -18,30 +18,28 @@ $(function(){
 		$(".alert")
 		.removeClass("alert-error")
 		.addClass("alert-success")
-		.show();
+		.slideDown();
 	}
 	var failMessage = function(message){
 		$("#message-content").text(message);
 		$(".alert")
 		.removeClass("alert-success")
 		.addClass("alert-error")
-		.show();
+		.slideDown();
 	}
 
 	$('.alert').hide();
 	$('.alert .close').bind("click", function(e) {
-	    $(this).parent().hide();
+	    $(this).parent().slideUp();
 	});
 
 	var sendRequest = function(link){
 		$('#loading').show();
 		$('button').attr("disabled", "disabled");
-		var id = localStorage.getItem('id'),
-			url = "http://mp3-downloader.appspot.com/send-mp3/phoneId" + id;
-		url += "&nctLink="
+		var id = localStorage.getItem('id');
 		$.ajax({
 			url: "http://mp3-downloader.appspot.com/send-mp3",
-			data: {phoneId:id, ntcLink: link},
+			data: {phoneId:id, link: link},
 			success: function(){
 				successMessage("Send playlist successfully!");
 			},
