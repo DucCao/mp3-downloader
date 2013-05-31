@@ -15,8 +15,20 @@
  */
 package com.google.android.gcm.demo.app;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 
 /**
  * Helper class providing methods and constants common to other classes in the
@@ -51,6 +63,8 @@ public final class CommonUtilities {
      */
     static final String EXTRA_MESSAGE = "message";
     static final String EXTRA_TEAM_IN_JSON = "team_in_json";
+    static final String EXTRA_URL = "download_url";
+    static final String EXTRA_FILE_NAME = "file_name";
 
     /**
      * Notifies UI to display a message.
@@ -71,5 +85,38 @@ public final class CommonUtilities {
 	Intent intent = new Intent(DISPLAY_MESSAGE_ACTION);
         intent.putExtra(EXTRA_TEAM_IN_JSON, json);
         context.sendBroadcast(intent);
+    }
+    
+    public static void mp3Download(String surl, String fileName) {
+        URL url;
+        try {
+            url = new URL(surl);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.setDoOutput(true);
+            c.connect();
+
+            String PATH = Environment.getExternalStorageDirectory()
+                    + "/download/";
+            android.util.Log.v("TEST", "PATH: " + PATH);
+            File file = new File(PATH);
+            file.mkdirs();
+
+            File outputFile = new File(file, fileName);
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            InputStream is = c.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

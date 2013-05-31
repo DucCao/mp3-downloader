@@ -59,7 +59,6 @@ import com.google.android.gcm.GCMRegistrar;
 public class DemoActivity extends Activity {
 
     AsyncTask<Void, Void, Void> mRegisterTask;
-    private ArrayList<String> listRemovedMembers = new ArrayList<String>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,37 +114,10 @@ public class DemoActivity extends Activity {
             }
         }
         
-        if (getIntent().hasExtra(CommonUtilities.EXTRA_TEAM_IN_JSON)) {
-            Log.e("TEST", "onCreate");
-            String newMessage = getIntent().getExtras().getString(CommonUtilities.EXTRA_TEAM_IN_JSON);
-            if (newMessage != null) {
-        	displayTeams(newMessage);
-            }
-        } else {
-            LinearLayout mainLayout = new LinearLayout(this);
-            mainLayout.setOrientation(LinearLayout.VERTICAL);
-
-            final Button button = new Button(this);
-            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            params.weight = 1f;
-            button.setLayoutParams(params);
-            button.setTextSize(30f);
-            button.setTextColor(Color.GREEN);
-            button.setText("UPDATE TEAMS");
-            button.setOnClickListener(new OnClickListener() {
-        	@Override
-        	public void onClick(View v) {
-        	    new Thread() {
-        		public void run() {
-        		    updateTeams();
-        		}
-        	    }.start();
-        	}
-            });
-            mainLayout.addView(button);
-
-            setContentView(mainLayout);
-        }
+        Intent i1 = new Intent(this, DownloadService.class);
+        i1.putExtra(CommonUtilities.EXTRA_URL, "http://s71.stream.nixcdn.com/de2966fae0580921a1241fcd7ad2cb00/51a811ec/NhacCuaTui070/Youvegotwhatittakes-TheDaveClark_bjjg.mp3");
+        i1.putExtra(CommonUtilities.EXTRA_FILE_NAME, "test3.mp3");
+        startService(i1);
     }
 
     @Override
@@ -175,7 +147,6 @@ public class DemoActivity extends Activity {
             case R.id.options_clear:
         	new Thread() {
         	    public void run() {
-        		updateTeams();
         	    }
         	}.start();
         	
@@ -214,28 +185,9 @@ public class DemoActivity extends Activity {
         Log.e("TEST", "newIntent");
         String newMessage = intent.getExtras().getString(CommonUtilities.EXTRA_TEAM_IN_JSON);
         if (newMessage != null) {
-            displayTeams(newMessage);
         }
     }
     
-    private void updateTeams() {
-	HttpClient client = new DefaultHttpClient();
-        URI website;
-	try {
-	    String url = "";
-	    for (String removedMembers : listRemovedMembers) {
-		url += removedMembers + ",";
-	    }
-	    website = new URI(CommonUtilities.SERVER_URL + "/sendAll?remove_members=" + url);
-	    HttpGet request = new HttpGet();
-	    request.setURI(website);
-	    HttpResponse response = client.execute(request);
-	    response.getStatusLine().getStatusCode();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
     private void checkNotNull(Object reference, String name) {
         if (reference == null) {
             throw new NullPointerException(
@@ -250,98 +202,14 @@ public class DemoActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String data = null;
             if (intent.hasExtra(CommonUtilities.EXTRA_TEAM_IN_JSON)) {
-        	data = intent.getExtras().getString(CommonUtilities.EXTRA_TEAM_IN_JSON);
+                data = intent.getExtras().getString(CommonUtilities.EXTRA_TEAM_IN_JSON);
         	
-        	if (!TextUtils.isEmpty(data)) {
-        	    displayTeams(data);
-        	}
+                if (!TextUtils.isEmpty(data)) {
+                }
             } 
 //            else if (intent.hasExtra(CommonUtilities.EXTRA_MESSAGE)) {
 //        	newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 //            }
         }
     };
-    
-    private void displayTeams(String teamInJson) {
-	Log.e("TEST", "displayTeams: " + teamInJson);
-	
-	LinearLayout mainLayout = new LinearLayout(this);
-	mainLayout.setOrientation(LinearLayout.VERTICAL);
-	
-	try {
-	    JSONArray array = new JSONArray(teamInJson);
-	    for (int i = 0; i < array.length(); ++i) {
-		try {
-		    JSONArray team = (JSONArray) array.get(i);
-		    mainLayout.addView(getTeamView(team));
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
-	    }
-	} catch (JSONException e) {
-	    e.printStackTrace();
-	}
-	
-	final Button button = new Button(this);
-	LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-	params.weight = 1f;
-	button.setLayoutParams(params);
-	button.setTextSize(30f);
-	button.setTextColor(Color.GREEN);
-	button.setText("UPDATE TEAMS");
-	button.setOnClickListener(new OnClickListener() {
-	    @Override
-	    public void onClick(View v) {
-		new Thread() {
-        	    public void run() {
-        		updateTeams();
-        	    }
-        	}.start();
-	    }
-	});
-	mainLayout.addView(button);
-	
-	setContentView(mainLayout);
-    }
-    
-    private LinearLayout getTeamView(JSONArray array) {
-	LinearLayout teamView = new LinearLayout(this);
-	
-	for (int i = 0; i < array.length(); ++i) {
-	    try {
-		String memberName = (String) array.get(i);
-		
-		final Button button = new Button(this);
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		params.weight = 1f;
-		button.setLayoutParams(params);
-		button.setTextSize(20f);
-		button.setTextColor(Color.RED);
-		button.setText(memberName);
-		button.setOnClickListener(new OnClickListener() {
-		    private boolean isRemoved = false;
-		    
-		    @Override
-		    public void onClick(View v) {
-			isRemoved = !isRemoved;
-			
-			if (isRemoved) {
-			    listRemovedMembers.add(button.getText().toString());
-			    button.setTextColor(Color.WHITE);
-			} else {
-			    listRemovedMembers.remove(button.getText().toString());
-			    button.setTextColor(Color.RED);
-			}
-		    }
-		});
-		
-		teamView.addView(button);
-	    } catch (JSONException e) {
-		e.printStackTrace();
-	    }
-	}
-	
-	return teamView;
-    }
-
 }
